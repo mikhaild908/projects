@@ -2,63 +2,36 @@ import React, { Component } from 'react';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Project from '../components/Project';
+import axios from 'axios';
 
 class ProjectList extends Component {
     state = {
         projects: [],
+        filteredProjects: [],
         searchString: ''
     };
 
-    constructor() {
-        super();
-        this.getProjects();
-    }
-
-    getProjects() {
-        // TODO:
-        this.setState({projects:
-            [
-                {
-                    fields: {
-                        title: 'Number # 1',
-                        description: 'This is Project # 1',
-                        url: 'http://clickanthem.com'
-                    }
-                },
-                {
-                    fields: {
-                        title: 'Number # 2',
-                        description: 'This is Project # 2',
-                        url: 'http://clickanthem.com'
-                    }
-                },
-                {
-                    fields: {
-                        title: 'Number # 3',
-                        description: 'This is Project # 3',
-                        url: 'http://clickanthem.com'
-                    }
-                },
-            ]
-        }); 
+    componentDidMount() {
+        axios('projects.json')
+            .then(result => this.setState({projects: result.data, filteredProjects: result.data.filter(() => true)}))
+            .catch(error => console.log(error));
     }
 
     onSearchInputChange = (event) => {
         if(event.target.value) {
-            this.setState({searchString: event.target.value});
+            this.setState({filteredProjects:
+                this.state.projects.filter(project => project.fields.description.toLowerCase().indexOf(event.target.value.toLowerCase()) > -1)});
         }
         else {
-            this.setState({searchString: ''});
+            this.setState({filteredProjects: this.state.projects.filter(project => true)});
         }
-
-        this.getProjects();
     };
 
     render() {
         return (
             <div>
                 {
-                    this.state.projects ? (
+                    this.state.filteredProjects ? (
                         <div>
                             <TextField style={{padding: 24}}
                                        id='searchInput'
@@ -66,9 +39,9 @@ class ProjectList extends Component {
                                        margin='normal'
                                        onChange={this.onSearchInputChange}/>
                             <Grid container spacing={24} style={{padding: 24}}>
-                                { this.state.projects.map(currentProject => (
+                                { this.state.filteredProjects.map(currentProject => (
                                     <Grid item xs={12} sm={6} lg={4} xl={3}>
-                                        <Project project={currentProject}/>
+                                        <Project project={currentProject} key={currentProject.key}/>
                                     </Grid>
                                 ))}
                             </Grid>

@@ -13,7 +13,7 @@ const Project = (props) => {
                 props.project ? (
                     <Card>
                         <CardMedia style={{height: 0, paddingTop: '56.25%'}}
-                                   //image={props.project.fields.projectImage.fields.file.url}
+                                   image={props.project.fields.imageurl}
                                    title={props.project.fields.title} />
                         <CardContent>
                             <Typography gutterBottom variant='headline' component='h2'>
